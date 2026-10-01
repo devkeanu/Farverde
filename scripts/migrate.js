@@ -38,8 +38,10 @@ await sql`
     leverage      text NOT NULL DEFAULT '1:20',
     credit_limit  numeric NOT NULL DEFAULT 0,
     notice        text NOT NULL DEFAULT '',
-    balances      jsonb NOT NULL DEFAULT '{"credit":0,"withdraw":0,"outstanding":0,"loan":0}'::jsonb,
-    history       jsonb NOT NULL DEFAULT '{"credit":[],"withdraw":[],"outstanding":[],"loan":[]}'::jsonb,
+    wallet_asset   text NOT NULL DEFAULT 'BTC',
+    wallet_address text NOT NULL DEFAULT '',
+    balances      jsonb NOT NULL DEFAULT '{"available":0,"deposit":0,"withdrawal":0,"outstanding":0,"loan":0}'::jsonb,
+    history       jsonb NOT NULL DEFAULT '{"available":[],"deposit":[],"withdrawal":[],"outstanding":[],"loan":[]}'::jsonb,
     holdings      jsonb NOT NULL DEFAULT '[]'::jsonb,
     transactions  jsonb NOT NULL DEFAULT '[]'::jsonb,
     joined        date NOT NULL DEFAULT current_date,
@@ -60,6 +62,23 @@ await sql`
 `;
 
 await sql`
+  CREATE TABLE IF NOT EXISTS deposits (
+    id             text PRIMARY KEY,
+    account_id     text NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    amount         numeric NOT NULL,
+    currency       text NOT NULL,
+    asset          text NOT NULL DEFAULT 'BTC',
+    wallet_address text NOT NULL,
+    reference      text NOT NULL DEFAULT '',
+    status         text NOT NULL DEFAULT 'Pending'
+                     CHECK (status IN ('Pending', 'Confirmed', 'Rejected')),
+    note           text NOT NULL DEFAULT '',
+    created_at     timestamptz NOT NULL DEFAULT now(),
+    settled_at     timestamptz
+  )
+`;
+
+await sql`
   CREATE TABLE IF NOT EXISTS audit_log (
     id     text PRIMARY KEY,
     at     timestamptz NOT NULL DEFAULT now(),
@@ -73,6 +92,8 @@ await sql`CREATE UNIQUE INDEX IF NOT EXISTS accounts_email_idx ON accounts (lowe
 await sql`CREATE INDEX IF NOT EXISTS accounts_role_idx ON accounts (role)`;
 await sql`CREATE INDEX IF NOT EXISTS refresh_tokens_account_idx ON refresh_tokens (account_id)`;
 await sql`CREATE INDEX IF NOT EXISTS audit_log_at_idx ON audit_log (at DESC)`;
+await sql`CREATE INDEX IF NOT EXISTS deposits_account_idx ON deposits (account_id, created_at DESC)`;
+await sql`CREATE INDEX IF NOT EXISTS deposits_status_idx ON deposits (status) WHERE status = 'Pending'`;
 
 const hash = await bcrypt.hash(ADMIN_PASSWORD, 10);
 await sql`

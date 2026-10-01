@@ -35,12 +35,36 @@ export function toAccount(row) {
     leverage: row.leverage,
     creditLimit: Number(row.credit_limit ?? 0),
     notice: row.notice ?? "",
-    balances: row.balances ?? { credit: 0, withdraw: 0, outstanding: 0, loan: 0 },
-    history: row.history ?? { credit: [], withdraw: [], outstanding: [], loan: [] },
+    walletAsset: row.wallet_asset ?? "BTC",
+    walletAddress: row.wallet_address ?? "",
+    balances: row.balances ?? { available: 0, deposit: 0, withdrawal: 0, outstanding: 0, loan: 0 },
+    history: row.history ?? { available: [], deposit: [], withdrawal: [], outstanding: [], loan: [] },
     holdings: row.holdings ?? [],
     transactions: row.transactions ?? [],
     joined: row.joined ? String(row.joined).slice(0, 10) : null,
     updatedAt: row.updated_at ?? null,
+  };
+}
+
+/**
+ * Shape a `deposits` row. `amount` is numeric, so it arrives as a string.
+ * @param {Record<string, any>} row
+ * @returns {Record<string, any>}
+ */
+export function toDeposit(row) {
+  return {
+    id: row.id,
+    accountId: row.account_id,
+    accountName: row.account_name ?? undefined,
+    amount: Number(row.amount ?? 0),
+    currency: row.currency,
+    asset: row.asset,
+    walletAddress: row.wallet_address,
+    reference: row.reference ?? "",
+    status: row.status,
+    note: row.note ?? "",
+    createdAt: row.created_at,
+    settledAt: row.settled_at ?? null,
   };
 }
 

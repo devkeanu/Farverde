@@ -9,6 +9,7 @@ import { readSession } from "./middleware/auth.js";
 import authRoutes from "./routes/auth.js";
 import stateRoutes from "./routes/state.js";
 import accountRoutes from "./routes/accounts.js";
+import depositRoutes from "./routes/deposits.js";
 
 /**
  * Origins allowed to call this API, from CORS_ORIGINS.
@@ -49,6 +50,7 @@ export function createApp() {
   app.use("/auth", authRoutes);
   app.use("/state", stateRoutes);
   app.use("/accounts", accountRoutes);
+  app.use("/deposits", depositRoutes);
 
   app.use((_req, res) => res.status(404).json({ error: "Not found." }));
 

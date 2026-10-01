@@ -8,7 +8,7 @@ import { revokeAllForAccount } from "../tokens.js";
 
 const router = Router();
 
-const BALANCE_KEYS = ["credit", "withdraw", "outstanding", "loan"];
+const BALANCE_KEYS = ["available", "deposit", "withdrawal", "outstanding", "loan"];
 const MAX_HISTORY = 12;
 const STATUSES = ["Pending", "Active", "Restricted", "Suspended", "Closed"];
 const TIERS = ["Standard", "Prime", "Raw Spread", "Islamic"];
@@ -102,12 +102,19 @@ router.patch("/:id", async (req, res) => {
       leverage: p.leverage ?? client.leverage,
       creditLimit: p.creditLimit === undefined ? client.creditLimit : parseAmount(p.creditLimit),
       notice: p.notice === undefined ? client.notice : String(p.notice),
+      walletAsset: p.walletAsset ?? client.walletAsset,
+      walletAddress: p.walletAddress === undefined ? client.walletAddress : String(p.walletAddress).trim(),
     };
+
+    if (next.walletAddress.length > 120) {
+      return res.status(422).json({ error: "That does not look like a wallet address.", field: "walletAddress" });
+    }
 
     const [updated] = await sql`
       UPDATE accounts SET status = ${next.status}, tier = ${next.tier}, currency = ${next.currency},
                           leverage = ${next.leverage}, credit_limit = ${next.creditLimit},
-                          notice = ${next.notice}, updated_at = now()
+                          notice = ${next.notice}, wallet_asset = ${next.walletAsset},
+                          wallet_address = ${next.walletAddress}, updated_at = now()
       WHERE id = ${id} RETURNING *
     `;
 

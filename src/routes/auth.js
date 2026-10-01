@@ -13,10 +13,11 @@ const router = Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const CURRENCIES = ["USD", "GBP", "EUR"];
-const ZERO_BALANCES = { credit: 0, withdraw: 0, outstanding: 0, loan: 0 };
+const ZERO_BALANCES = { available: 0, deposit: 0, withdrawal: 0, outstanding: 0, loan: 0 };
 const FLAT_HISTORY = {
-  credit: Array(12).fill(0),
-  withdraw: Array(12).fill(0),
+  available: Array(12).fill(0),
+  deposit: Array(12).fill(0),
+  withdrawal: Array(12).fill(0),
   outstanding: Array(12).fill(0),
   loan: Array(12).fill(0),
 };
