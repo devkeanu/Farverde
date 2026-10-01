@@ -1,0 +1,24 @@
+{
+  "name": "empaz-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Farverde Markets API — accounts, sessions and the four client balances.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch --env-file=.env src/server.js",
+    "db:migrate": "node --env-file=.env scripts/migrate.js",
+    "lint": "oxlint src scripts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jose": "^6.2.12"
+  },
+  "devDependencies": {
+    "oxlint": "^1.79.0"
+  }
+}
