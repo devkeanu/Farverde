@@ -8,7 +8,7 @@ import { revokeAllForAccount } from "../tokens.js";
 
 const router = Router();
 
-const BALANCE_KEYS = ["available", "deposit", "withdrawal", "outstanding", "loan"];
+const BALANCE_KEYS = ["credit", "deposit", "withdraw", "outstanding", "loan"];
 const MAX_HISTORY = 12;
 const STATUSES = ["Pending", "Active", "Restricted", "Suspended", "Closed"];
 const TIERS = ["Standard", "Prime", "Raw Spread", "Islamic"];

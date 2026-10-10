@@ -90,12 +90,12 @@ router.patch("/:id", requireAdmin, async (req, res) => {
   const balances = {
     ...account.balances,
     deposit: Math.round((account.balances.deposit + deposit.amount) * 100) / 100,
-    available: Math.round((account.balances.available + deposit.amount) * 100) / 100,
+    credit: Math.round((account.balances.credit + deposit.amount) * 100) / 100,
   };
   const history = {
     ...account.history,
     deposit: pushHistory(account.history.deposit, balances.deposit),
-    available: pushHistory(account.history.available, balances.available),
+    credit: pushHistory(account.history.credit, balances.credit),
   };
   const entry = {
     id: `tx_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
