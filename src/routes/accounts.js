@@ -185,4 +185,18 @@ router.delete("/:id/transactions/:txId", async (req, res) => {
   return res.json({ client: toAccount(updated) });
 });
 
+// -------- DELETE /accounts/:id --------------
+router.delete("/:id", async (req, res) => {
+  const client = req.client;
+
+  if (client.role === "admin") {
+    return res.status(403).json({ error: "Admin accounts can't be deleted here." });
+  }
+
+  await sql`DELETE FROM accounts WHERE id = ${req.params.id}`;
+  await audit("Account deleted", `${client.name} · ${client.id} (${client.email}) removed`, req.session.name);
+
+  return res.json({ ok: true, id: req.params.id });
+});
+
 export default router;
